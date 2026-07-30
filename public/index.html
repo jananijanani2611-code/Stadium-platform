@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Concourse AI — MetLife Stadium Operations</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="ticker-bar" aria-label="Live stadium updates" role="status">
+    <div class="ticker-track" id="tickerTrack">
+      <!-- ticker items injected by JS -->
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark">C</span>
+      <div class="brand-text">
+        <h1>Concourse AI</h1>
+        <p id="stadiumMeta">MetLife Stadium · FIFA World Cup 2026</p>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <span class="live-pill"><span class="live-dot"></span> LIVE</span>
+      <span class="clock" id="clock">--:--:--</span>
+
+      <div class="notif-wrap">
+        <button id="notifBell" class="icon-btn" aria-haspopup="true" aria-expanded="false" title="Notifications">
+          🔔
+          <span id="notifBadge" class="badge" hidden>0</span>
+        </button>
+        <div id="notifPanel" class="notif-panel" hidden>
+          <h3>Notifications</h3>
+          <div id="notifList" class="notif-list"><!-- injected --></div>
+        </div>
+      </div>
+
+      <button id="emergencyBtn" class="emergency-btn" title="Report an emergency">🚨 Emergency</button>
+    </div>
+  </header>
+
+  <div id="emergencyModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="emergencyTitle">
+      <h2 id="emergencyTitle">What's the emergency?</h2>
+      <p class="modal-sub">Concourse AI will give you immediate guidance and the nearest help point.</p>
+      <div class="emergency-grid">
+        <button class="emergency-option" data-emergency="fire">🔥 Fire</button>
+        <button class="emergency-option" data-emergency="medical">🚑 Medical Emergency</button>
+        <button class="emergency-option" data-emergency="lost-child">🧒 Lost Child</button>
+        <button class="emergency-option" data-emergency="security">🛡️ Security Incident</button>
+      </div>
+      <button id="emergencyCancelBtn" class="ghost-btn">Cancel</button>
+    </div>
+  </div>
+
+  <main class="layout">
+
+    <aside class="sidebar">
+
+      <section class="card match-card" aria-label="Match information">
+        <p class="eyebrow">⚽ FIFA World Cup 2026 · MetLife Stadium</p>
+        <h2 id="matchTeams">Argentina vs Brazil</h2>
+        <div class="match-grid">
+          <div><span class="label">Kickoff</span><span class="value" id="matchKickoff">7:30 PM</span></div>
+          <div><span class="label">Attendance</span><span class="value" id="matchAttendance">79,420</span></div>
+          <div><span class="label">Weather</span><span class="value" id="matchWeather">22°C</span></div>
+          <div><span class="label">Status</span><span class="value status-live" id="matchStatus">LIVE ●</span></div>
+        </div>
+      </section>
+
+      <section class="stats-grid" aria-label="Stadium statistics">
+        <div class="stat-card">
+          <span class="stat-label">Open Gates</span>
+          <span class="stat-value" id="statOpenGates">—</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Average Queue</span>
+          <span class="stat-value" id="statAvgQueue">—</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Crowd Density</span>
+          <span class="stat-value" id="statCrowdDensity">—</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Medical Alerts</span>
+          <span class="stat-value" id="statMedicalAlerts">—</span>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Stadium map">
+        <h2 class="panel-title">Stadium Map</h2>
+        <div class="stadium-map" id="stadiumMap">
+          <div class="pitch">PITCH</div>
+          <!-- gate + amenity markers injected by JS -->
+        </div>
+        <p class="map-hint">Markers pulse when Concourse AI points you somewhere.</p>
+      </section>
+
+      <section class="card" aria-label="Crowd heatmap">
+        <h2 class="panel-title">Crowd Heatmap</h2>
+        <div class="heatmap-legend">
+          <span><i class="dot low"></i> Low</span>
+          <span><i class="dot medium"></i> Medium</span>
+          <span><i class="dot high"></i> High</span>
+        </div>
+        <div id="heatmapList" class="heatmap-list"><!-- injected --></div>
+      </section>
+
+      <section class="card" aria-label="Gate status board">
+        <h2 class="panel-title">Gate Status</h2>
+        <div id="gateBoard" class="gate-board"><!-- injected --></div>
+      </section>
+
+      <section class="card" aria-label="Operations dashboard">
+        <h2 class="panel-title">Operations Dashboard</h2>
+        <div id="opsDashboard" class="ops-dashboard"><!-- injected --></div>
+      </section>
+
+    </aside>
+
+    <section class="chat-panel" aria-label="Chat with Concourse AI">
+
+      <div class="quick-actions" id="quickActions">
+        <button data-prompt="Which gate should I use and what's the shortest wait right now?">📍 Find My Gate</button>
+        <button data-prompt="What's the nearest open restroom with the shortest line?">🚻 Restroom</button>
+        <button data-prompt="Which food stall has the shortest queue right now?">🍔 Food Queue</button>
+        <button data-prompt="Where's the nearest medical point?">🚑 Medical</button>
+        <button data-prompt="What accessibility options are available, like wheelchair routes and hearing assistance?">♿ Accessibility</button>
+        <button data-prompt="Which parking lot has the most space available?">🚗 Parking</button>
+      </div>
+
+      <div id="chatLog" class="chat-log" role="log" aria-live="polite">
+        <div class="msg msg-assistant">
+          <span class="avatar avatar-assistant">C</span>
+          <div class="msg-body">
+            <span class="msg-label">Concourse AI</span>
+            <p>Welcome to MetLife Stadium.</p>
+            <p>Need directions to your gate? Looking for the fastest food line? Need accessible seating or medical help?</p>
+            <p>Ask me anything — I'll guide you using what's actually happening on the concourse right now, not a static map.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="typingIndicator" class="typing-indicator" hidden>
+        <span class="avatar avatar-assistant">C</span>
+        <p>Concourse AI is thinking<span class="dots"><span>.</span><span>.</span><span>.</span></span></p>
+      </div>
+
+      <form id="chatForm" class="chat-form">
+        <label for="chatInput" class="sr-only">Ask Concourse AI a question</label>
+        <input
+          id="chatInput"
+          type="text"
+          placeholder="e.g. Which restroom near section 130 has the shortest line?"
+          autocomplete="off"
+          required
+        />
+        <button id="sendBtn" type="submit">Ask</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Built for Smart Stadiums &amp; Tournament Operations Challenge</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

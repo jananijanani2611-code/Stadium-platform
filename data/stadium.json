@@ -1,0 +1,287 @@
+{
+  "stadiumName": "MetLife Stadium",
+  "event": "FIFA World Cup 2026 - Group Stage Match",
+  "kickoff": "2026-07-19T19:30:00-04:00",
+  "match": {
+    "homeTeam": "Argentina",
+    "awayTeam": "Brazil",
+    "kickoffDisplay": "7:30 PM",
+    "attendance": 79420,
+    "weatherC": 22,
+    "status": "LIVE"
+  },
+  "gates": [
+    {
+      "id": "Gate A",
+      "sections": [
+        "101-115"
+      ],
+      "status": "open",
+      "waitMinutes": 4,
+      "crowdLevel": "low"
+    },
+    {
+      "id": "Gate B",
+      "sections": [
+        "116-130"
+      ],
+      "status": "open",
+      "waitMinutes": 13,
+      "crowdLevel": "high",
+      "note": "Heavy crowd building near this gate"
+    },
+    {
+      "id": "Gate C",
+      "sections": [
+        "131-145"
+      ],
+      "status": "delayed",
+      "waitMinutes": 22,
+      "crowdLevel": "low",
+      "note": "Bag check backlog, extra staff dispatched"
+    },
+    {
+      "id": "Gate D",
+      "sections": [
+        "146-160"
+      ],
+      "status": "closed",
+      "waitMinutes": null,
+      "crowdLevel": "medium",
+      "note": "Closed for accessibility drop-off until 6:30 PM"
+    },
+    {
+      "id": "Gate E",
+      "sections": [
+        "161-175"
+      ],
+      "status": "open",
+      "waitMinutes": 13,
+      "crowdLevel": "high"
+    }
+  ],
+  "amenities": {
+    "restrooms": [
+      {
+        "id": "RR-1",
+        "nearSection": "108",
+        "status": "open",
+        "queueMinutes": 2,
+        "occupancyPct": 28
+      },
+      {
+        "id": "RR-2",
+        "nearSection": "122",
+        "status": "open",
+        "queueMinutes": 9,
+        "occupancyPct": 90
+      },
+      {
+        "id": "RR-3",
+        "nearSection": "140",
+        "status": "maintenance",
+        "queueMinutes": null,
+        "occupancyPct": 0,
+        "note": "Closed for cleaning, nearest alternative RR-4"
+      },
+      {
+        "id": "RR-4",
+        "nearSection": "150",
+        "status": "open",
+        "queueMinutes": 5,
+        "occupancyPct": 53
+      },
+      {
+        "id": "RR-5",
+        "nearSection": "168",
+        "status": "open",
+        "queueMinutes": 3,
+        "occupancyPct": 49
+      }
+    ],
+    "foodStalls": [
+      {
+        "id": "Concourse Grill",
+        "nearSection": "110",
+        "status": "open",
+        "queueMinutes": 8,
+        "popularItem": "Loaded fries"
+      },
+      {
+        "id": "Taco Stand North",
+        "nearSection": "125",
+        "status": "open",
+        "queueMinutes": 7,
+        "popularItem": "Street tacos"
+      },
+      {
+        "id": "Global Eats",
+        "nearSection": "135",
+        "status": "open",
+        "queueMinutes": 25,
+        "popularItem": "Chicken tikka wrap"
+      },
+      {
+        "id": "Pizza Corner",
+        "nearSection": "155",
+        "status": "open",
+        "queueMinutes": 9,
+        "popularItem": "Pepperoni slice"
+      },
+      {
+        "id": "Vegan Kitchen",
+        "nearSection": "170",
+        "status": "open",
+        "queueMinutes": 1,
+        "popularItem": "Jackfruit tacos"
+      }
+    ],
+    "medical": [
+      {
+        "id": "First Aid North",
+        "nearSection": "112",
+        "status": "staffed"
+      },
+      {
+        "id": "First Aid South",
+        "nearSection": "152",
+        "status": "staffed"
+      }
+    ],
+    "parking": [
+      {
+        "id": "Lot A",
+        "status": "open",
+        "occupancyPct": 60
+      },
+      {
+        "id": "Lot B",
+        "status": "open",
+        "occupancyPct": 85
+      },
+      {
+        "id": "Lot C (accessible)",
+        "status": "open",
+        "occupancyPct": 40
+      }
+    ],
+    "accessibility": {
+      "wheelchairSeating": [
+        "Section 105",
+        "Section 128",
+        "Section 148",
+        "Section 172"
+      ],
+      "elevators": [
+        "Elevator 1 (near Gate A)",
+        "Elevator 3 (near Gate C)",
+        "Elevator 5 (near Gate E)"
+      ],
+      "wheelchairRoutes": [
+        "Gate A ramp to Section 105",
+        "Gate E ramp to Section 172"
+      ],
+      "hearingAssistance": {
+        "location": "Guest Services, Section 120",
+        "status": "available",
+        "note": "Assisted listening devices on request, ID required"
+      },
+      "priorityEntry": {
+        "location": "Gate A, dedicated lane",
+        "status": "open"
+      },
+      "sensoryRoom": {
+        "location": "Section 130 concourse",
+        "status": "open"
+      }
+    }
+  },
+  "medicalAlerts": [],
+  "dashboard": {
+    "lostAndFound": 3,
+    "cleaningRequests": 2,
+    "securityAlerts": 1
+  },
+  "notifications": [
+    {
+      "id": "n-1785427622101-499",
+      "message": "Gate A wait time updated to 4 min",
+      "time": "9:37 PM",
+      "read": false
+    },
+    {
+      "id": "n-1785427620196-957",
+      "message": "Pizza Corner queue now 9 min",
+      "time": "9:37 PM",
+      "read": false
+    },
+    {
+      "id": "n-1785427542322-187",
+      "message": "Gate C wait time updated to 22 min",
+      "time": "9:35 PM",
+      "read": false
+    },
+    {
+      "id": "n-1785427482314-94",
+      "message": "Global Eats queue now 25 min",
+      "time": "9:34 PM",
+      "read": false
+    },
+    {
+      "id": "n-1785427422319-921",
+      "message": "Gate A wait time updated to 1 min",
+      "time": "9:33 PM",
+      "read": false
+    },
+    {
+      "id": "n-1785427362319-385",
+      "message": "Gate B wait time updated to 13 min",
+      "time": "9:32 PM",
+      "read": false
+    },
+    {
+      "id": "n-1785427302316-693",
+      "message": "Taco Stand North queue now 6 min",
+      "time": "9:31 PM",
+      "read": false
+    },
+    {
+      "id": "n-1785427242324-196",
+      "message": "Gate A wait time updated to 1 min",
+      "time": "9:30 PM",
+      "read": false
+    },
+    {
+      "id": "n-1785427182330-688",
+      "message": "Pizza Corner queue now 7 min",
+      "time": "9:29 PM",
+      "read": false
+    },
+    {
+      "id": "n-1785427182329-924",
+      "message": "Gate E wait time updated to 13 min",
+      "time": "9:29 PM",
+      "read": false
+    },
+    {
+      "id": "n-1785427122319-889",
+      "message": "Gate B wait time updated to 15 min",
+      "time": "9:28 PM",
+      "read": false
+    },
+    {
+      "id": "n-1785427062316-504",
+      "message": "Gate B wait time updated to 13 min",
+      "time": "9:27 PM",
+      "read": false
+    }
+  ],
+  "liveTicker": [
+    "Gate A wait time updated to 4 min",
+    "Pizza Corner queue now 9 min",
+    "Gate C wait time updated to 22 min",
+    "Global Eats queue now 25 min",
+    "Gate A wait time updated to 1 min",
+    "Gate B wait time updated to 13 min"
+  ]
+}

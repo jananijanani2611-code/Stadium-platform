@@ -1,0 +1,18 @@
+{
+  "name": "concourse-stadium-assistant",
+  "version": "1.0.0",
+  "description": "GenAI-powered real-time fan navigation assistant for Smart Stadiums & Tournament Operations (PromptWars Virtual Challenge 4)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

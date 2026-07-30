@@ -1,0 +1,742 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* palette stays the same as v1 - what's new here is a proper depth system.
+   previously every card used the exact same --card-bg/--card-border, which
+   is why the whole UI read as one flat plane of identical boxes. now there
+   are three explicit levels: the page itself, a "panel" level for utility
+   widgets (map, heatmap, gates, ops), and an "elevated" level reserved for
+   the two things that should actually draw the eye (match card, chat) */
+:root {
+  --pitch-green: #1B4332;
+  --night-navy: #0B2545;
+  --floodlight: #F8F9F4;
+  --turf-accent: #52B788;
+  --amber-alert: #E8871E;
+  --chalk-line: #EDEDE9;
+  --text-dim: #A9C4B8;
+  --red-alert: #C1440E;
+
+  --bg-base: #0B2545;           /* the page itself - darkest */
+  --bg-panel: rgba(255,255,255,0.035);   /* utility widgets - just barely lifted off the page */
+  --bg-elevated: rgba(255,255,255,0.055); /* hero elements - match card, chat */
+  --border-panel: rgba(255,255,255,0.07);
+  --border-elevated: rgba(255,255,255,0.13);
+
+  /* kept for anything not yet migrated to the tokens above */
+  --card-bg: var(--bg-panel);
+  --card-border: var(--border-panel);
+}
+
+* { box-sizing: border-box; }
+
+/* BUG FIX: several components below (.modal-overlay, .typing-indicator, .badge)
+   set an unconditional `display` value, which - due to CSS cascade origin
+   rules - overrides the browser's default `[hidden] { display: none }`
+   even though specificity looks tied. Without this rule, toggling the
+   `hidden` property/attribute from JS had no visual effect on those
+   elements. This is a global, low-risk fix: it only changes the behavior
+   of elements that are already meant to be invisible. */
+[hidden] {
+  display: none !important;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--night-navy);
+  color: var(--floodlight);
+  font-family: 'Work Sans', sans-serif;
+  min-height: 100vh;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+}
+
+/* --- Ticker (signature element, unchanged from v1) --- */
+.ticker-bar {
+  background: #000;
+  border-bottom: 2px solid var(--amber-alert);
+  overflow: hidden;
+  white-space: nowrap;
+  height: 34px;
+  display: flex;
+  align-items: center;
+}
+.ticker-track {
+  display: inline-flex;
+  gap: 3rem;
+  animation: scroll-ticker 28s linear infinite;
+  padding-left: 100%;
+}
+.ticker-track span {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--amber-alert);
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+}
+@keyframes scroll-ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; padding-left: 0; }
+}
+
+/* --- Header --- */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 2rem;
+  background: linear-gradient(180deg, var(--pitch-green), var(--night-navy));
+  border-bottom: 1px solid var(--card-border);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.brand { display: flex; align-items: center; gap: 0.9rem; }
+.brand-mark {
+  font-family: 'Archivo Black', sans-serif;
+  background: var(--turf-accent);
+  color: var(--night-navy);
+  width: 42px; height: 42px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.brand-text h1 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.4rem;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+.brand-text p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(193, 68, 14, 0.18);
+  color: #FF8A65;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  letter-spacing: 0.06em;
+}
+.live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #FF8A65;
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+.clock {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.icon-btn {
+  position: relative;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  width: 38px; height: 38px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--floodlight);
+}
+.icon-btn:hover, .icon-btn:focus-visible { background: rgba(255,255,255,0.12); }
+
+.badge {
+  position: absolute;
+  top: -6px; right: -6px;
+  background: var(--amber-alert);
+  color: var(--night-navy);
+  font-size: 0.65rem;
+  font-weight: 700;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 3px;
+}
+
+.notif-wrap { position: relative; }
+.notif-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 300px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: #10233b;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 0.9rem;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+  z-index: 20;
+}
+.notif-panel h3 {
+  margin: 0 0 0.6rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--turf-accent);
+}
+.notif-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.notif-item {
+  background: rgba(255,255,255,0.04);
+  border-left: 3px solid var(--turf-accent);
+  border-radius: 6px;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.notif-item.unread { border-left-color: var(--amber-alert); }
+.notif-item .notif-time {
+  display: block;
+  margin-top: 0.2rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+.notif-empty { color: var(--text-dim); font-size: 0.85rem; padding: 0.4rem; }
+
+.emergency-btn {
+  background: var(--red-alert);
+  color: var(--floodlight);
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Work Sans', sans-serif;
+}
+.emergency-btn:hover, .emergency-btn:focus-visible { background: #d9520f; }
+
+/* --- Emergency modal --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 1rem;
+  /* BUG FIX: this element no longer relies on the `hidden` attribute for
+     show/hide - it needs a smooth fade, which display:none can't animate.
+     Default state below is fully invisible and non-interactive. */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.18s ease, visibility 0.18s ease;
+}
+.modal-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay { transition: none; }
+}
+.modal {
+  background: #10233b;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 420px;
+  width: 100%;
+}
+.modal h2 { margin: 0 0 0.3rem; font-family: 'Archivo Black', sans-serif; font-size: 1.1rem; }
+.modal-sub { color: var(--text-dim); font-size: 0.85rem; margin: 0 0 1rem; }
+.emergency-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+.emergency-option {
+  background: rgba(193,68,14,0.15);
+  border: 1px solid var(--red-alert);
+  color: var(--floodlight);
+  border-radius: 8px;
+  padding: 0.7rem 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.emergency-option:hover, .emergency-option:focus-visible {
+  background: rgba(193,68,14,0.3);
+}
+
+.ghost-btn {
+  background: transparent;
+  border: 1px solid var(--turf-accent);
+  color: var(--turf-accent);
+  padding: 0.55rem 1rem;
+  border-radius: 6px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  width: 100%;
+}
+.ghost-btn:hover, .ghost-btn:focus-visible {
+  background: rgba(82,183,136,0.15);
+}
+
+/* --- Layout --- */
+.layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* utility panels (map, heatmap, gates, ops) sit one level above the page -
+   quiet, not competing with the match card or chat for attention */
+.card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 10px;
+  padding: 0.95rem 1.1rem;
+}
+
+.panel-title {
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  margin: 0 0 0.75rem;
+}
+
+/* --- Match info card: the one thing in the sidebar that should look like
+   a hero, not a utility widget. Elevated background + gradient + shadow +
+   bigger type, distinct from the flatter cards below it --- */
+.match-card {
+  background: linear-gradient(155deg, rgba(82,183,136,0.14), var(--bg-elevated) 55%);
+  border: 1px solid var(--border-elevated);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+.match-card .eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--turf-accent);
+  margin: 0 0 0.35rem;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+.match-card h2 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.5rem;
+  margin: 0 0 1rem;
+  letter-spacing: 0.01em;
+}
+.match-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+}
+.match-grid .label {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+.match-grid .value {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+.status-live { color: #FF8A65; }
+
+/* --- Stats cards: secondary emphasis - a step down from the match card,
+   a step up from the flat utility panels --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+.stat-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-panel);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.stat-label {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--turf-accent);
+  transition: opacity 0.2s ease;
+}
+
+/* --- Stadium map: previously a flat radial gradient with plain text tags -
+   fair critique that it looked like a placeholder. Added a running-track
+   ring and yard-line pitch markings for texture, and markers are now pill
+   badges with a status dot so gates read as distinct "places" rather than
+   floating labels --- */
+.stadium-map {
+  position: relative;
+  background:
+    repeating-radial-gradient(ellipse at center, rgba(255,255,255,0.02) 0, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 28px),
+    radial-gradient(ellipse at center, #18402f 0%, #0c2016 70%, #081712 100%);
+  border-radius: 12px;
+  height: 270px;
+  border: 1px solid var(--border-panel);
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.35);
+}
+.pitch {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56%; height: 42%;
+  border: 2px solid rgba(255,255,255,0.18);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  color: rgba(255,255,255,0.22);
+  background-image: repeating-linear-gradient(90deg, transparent, transparent calc(100% / 6 - 1px), rgba(255,255,255,0.07) calc(100% / 6 - 1px), rgba(255,255,255,0.07) calc(100% / 6));
+}
+.pitch::before {
+  content: "";
+  position: absolute;
+  width: 15%;
+  height: 15%;
+  border: 2px solid rgba(255,255,255,0.18);
+  border-radius: 50%;
+}
+.map-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(8,20,16,0.72);
+  backdrop-filter: blur(2px);
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-panel);
+  white-space: nowrap;
+  cursor: default;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.map-marker::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--turf-accent);
+  flex-shrink: 0;
+}
+.map-marker.gate { border-color: rgba(82,183,136,0.4); color: var(--floodlight); font-weight: 600; }
+.map-marker.amenity { color: var(--text-dim); font-size: 0.62rem; }
+.map-marker.amenity::before { background: var(--text-dim); }
+.map-marker.active {
+  animation: marker-pulse 1s ease-in-out 3;
+  border-color: var(--amber-alert);
+  color: var(--amber-alert);
+  z-index: 5;
+}
+.map-marker.active::before { background: var(--amber-alert); }
+@keyframes marker-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232,135,30,0.6); }
+  50% { box-shadow: 0 0 0 6px rgba(232,135,30,0); }
+}
+.map-hint {
+  margin: 0.6rem 0 0;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+/* --- Heatmap --- */
+.heatmap-legend {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-bottom: 0.7rem;
+}
+.heatmap-legend .dot { margin-right: 0.3rem; }
+.dot {
+  display: inline-block;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+.dot.low { background: var(--turf-accent); }
+.dot.medium { background: var(--amber-alert); }
+.dot.high { background: var(--red-alert); }
+
+.heatmap-list { display: flex; flex-direction: column; gap: 0.4rem; }
+.heatmap-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+}
+.heatmap-row .bar-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.heatmap-row .bar-fill { height: 100%; border-radius: 999px; transition: width 0.4s ease; }
+.bar-fill.low { background: var(--turf-accent); width: 30%; }
+.bar-fill.medium { background: var(--amber-alert); width: 65%; }
+.bar-fill.high { background: var(--red-alert); width: 95%; }
+
+/* --- Gate board (same visual language as v1) --- */
+.gate-board { display: flex; flex-direction: column; gap: 0.6rem; }
+.gate-row {
+  background: rgba(255,255,255,0.04);
+  border-left: 4px solid var(--turf-accent);
+  border-radius: 6px;
+  padding: 0.6rem 0.8rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+}
+.gate-row.delayed { border-left-color: var(--amber-alert); }
+.gate-row.closed { border-left-color: var(--red-alert); opacity: 0.75; }
+.gate-row .gate-id { font-weight: 600; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.15rem; color: var(--floodlight); }
+.gate-row .gate-status { color: var(--text-dim); }
+
+/* --- Ops dashboard --- */
+.ops-dashboard { display: flex; flex-direction: column; gap: 0.7rem; }
+.ops-row { font-size: 0.82rem; }
+.ops-row .ops-top { display: flex; justify-content: space-between; margin-bottom: 0.25rem; }
+.ops-row .ops-label { color: var(--text-dim); }
+.ops-row .ops-value { font-family: 'JetBrains Mono', monospace; color: var(--floodlight); }
+.ops-bar-track {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.ops-bar-fill {
+  height: 100%;
+  background: var(--turf-accent);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+.ops-bar-fill.warn { background: var(--amber-alert); }
+.ops-bar-fill.critical { background: var(--red-alert); }
+
+/* --- Chat panel --- */
+.chat-panel {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-elevated);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  height: 82vh;
+  min-height: 560px;
+  position: sticky;
+  top: 1.5rem;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+}
+
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem 0;
+}
+.quick-actions button {
+  background: rgba(82,183,136,0.1);
+  border: 1px solid rgba(82,183,136,0.35);
+  color: var(--floodlight);
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.quick-actions button:hover, .quick-actions button:focus-visible {
+  background: rgba(82,183,136,0.22);
+  transform: translateY(-1px);
+}
+
+.chat-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.msg { max-width: 88%; display: flex; gap: 0.6rem; }
+.msg-body { display: flex; flex-direction: column; }
+.msg p { margin: 0.2rem 0 0; line-height: 1.5; font-size: 0.95rem; }
+.msg-label {
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.72rem;
+  color: var(--turf-accent);
+}
+.avatar {
+  flex-shrink: 0;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.1rem;          /* comfortable size for the 🏟️ emoji */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+.avatar-assistant { background: var(--turf-accent); color: var(--night-navy); }
+.avatar-user {
+  background: var(--amber-alert);
+  color: var(--night-navy);
+  font-size: 0.58rem;         /* "You" fits the 32px circle */
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.msg-user { align-self: flex-end; flex-direction: row-reverse; text-align: right; }
+.msg-user .msg-body { align-items: flex-end; }
+.msg-user .msg-label { color: var(--amber-alert); }
+.msg-user p {
+  background: var(--pitch-green);
+  padding: 0.6rem 0.95rem;
+  border-radius: 16px 16px 4px 16px;
+  display: inline-block;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.msg-assistant p {
+  background: rgba(255,255,255,0.07);
+  padding: 0.6rem 0.95rem;
+  border-radius: 16px 16px 16px 4px;
+  display: block;             /* allow multi-line bot replies to flow naturally */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  max-width: 100%;
+}
+.msg-error .msg-label { color: var(--red-alert); }
+.msg-error p { color: #FFB4A2; background: rgba(193,68,14,0.12); }
+
+.msg-timestamp {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  margin-top: 0.25rem;
+}
+
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 1.1rem 0.6rem;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+.typing-indicator p { margin: 0; display: flex; align-items: center; }
+.dots span {
+  animation: dot-blink 1.4s infinite;
+  opacity: 0;
+}
+.dots span:nth-child(2) { animation-delay: 0.2s; }
+.dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dot-blink {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  60% { opacity: 0; }
+}
+
+.chat-form {
+  display: flex;
+  gap: 0.6rem;
+  padding: 1rem;
+  border-top: 1px solid var(--card-border);
+}
+.chat-form input {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  padding: 0.65rem 0.8rem;
+  color: var(--floodlight);
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.95rem;
+}
+.chat-form input:focus-visible {
+  outline: 2px solid var(--turf-accent);
+  outline-offset: 1px;
+}
+.chat-form button {
+  background: var(--turf-accent);
+  color: var(--night-navy);
+  border: none;
+  border-radius: 6px;
+  padding: 0 1.3rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.chat-form button:hover, .chat-form button:focus-visible {
+  background: #6FCB9F;
+}
+
+.app-footer {
+  text-align: center;
+  padding: 1rem;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+}
