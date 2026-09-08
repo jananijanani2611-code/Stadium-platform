@@ -1,41 +1,60 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
-/* palette stays the same as v1 - what's new here is a proper depth system.
-   previously every card used the exact same --card-bg/--card-border, which
-   is why the whole UI read as one flat plane of identical boxes. now there
-   are three explicit levels: the page itself, a "panel" level for utility
-   widgets (map, heatmap, gates, ops), and an "elevated" level reserved for
-   the two things that should actually draw the eye (match card, chat) */
+/* ==================================================
+   PREMIUM SMART STADIUM THEME - light + soft green + white
+   Replaces the earlier dark-navy theme. Every selector below is kept
+   identical to what index.html/app.js already reference - only the
+   values changed. This means the redesign is live the moment this file
+   is swapped in, with zero HTML/JS changes required.
+   ================================================== */
 :root {
-  --pitch-green: #1B4332;
-  --night-navy: #0B2545;
-  --floodlight: #F8F9F4;
-  --turf-accent: #52B788;
-  --amber-alert: #E8871E;
-  --chalk-line: #EDEDE9;
-  --text-dim: #A9C4B8;
-  --red-alert: #C1440E;
+  --dark-green: #1B5E20;
+  --green: #2E7D32;
+  --med-green: #66BB6A;
+  --light-green: #A5D6A7;
+  --very-light-green: #E8F5E9;
+  --soft-bg: #F4FAF5;
+  --white: #FFFFFF;
+  --text: #17201A;
+  --text-secondary: #66736A;
+  --border: #DDE9DF;
+  --yellow: #FBC02D;
+  --orange: #FF9800;
+  --red: #E53935;
+  --emergency: #D32F2F;
 
-  --bg-base: #0B2545;           /* the page itself - darkest */
-  --bg-panel: rgba(255,255,255,0.035);   /* utility widgets - just barely lifted off the page */
-  --bg-elevated: rgba(255,255,255,0.055); /* hero elements - match card, chat */
-  --border-panel: rgba(255,255,255,0.07);
-  --border-elevated: rgba(255,255,255,0.13);
+  /* layered surfaces - white cards float on the soft green page, with a
+     touch more lift for the two "hero" elements (match card, chat) */
+  --bg-panel: var(--white);
+  --bg-elevated: var(--white);
+  --border-panel: var(--border);
+  --border-elevated: var(--light-green);
 
-  /* kept for anything not yet migrated to the tokens above */
+  /* soft, tinted-green shadows instead of harsh black - keeps the whole
+     thing feeling light rather than like a dashboard with drop-shadows */
+  --shadow-sm: 0 2px 8px rgba(27, 94, 32, 0.06);
+  --shadow-md: 0 8px 24px rgba(27, 94, 32, 0.09);
+  --shadow-lg: 0 12px 32px rgba(27, 94, 32, 0.12);
+
+  /* kept as aliases so nothing referencing the old token names breaks */
   --card-bg: var(--bg-panel);
   --card-border: var(--border-panel);
+  --pitch-green: var(--dark-green);
+  --night-navy: var(--soft-bg);
+  --floodlight: var(--text);
+  --turf-accent: var(--green);
+  --amber-alert: var(--orange);
+  --chalk-line: var(--border);
+  --text-dim: var(--text-secondary);
+  --red-alert: var(--red);
 }
 
 * { box-sizing: border-box; }
 
-/* BUG FIX: several components below (.modal-overlay, .typing-indicator, .badge)
-   set an unconditional `display` value, which - due to CSS cascade origin
-   rules - overrides the browser's default `[hidden] { display: none }`
-   even though specificity looks tied. Without this rule, toggling the
-   `hidden` property/attribute from JS had no visual effect on those
-   elements. This is a global, low-risk fix: it only changes the behavior
-   of elements that are already meant to be invisible. */
+/* several components below (.modal-overlay, .typing-indicator, .badge) set
+   an unconditional `display` value, which overrides the browser's default
+   `[hidden] { display: none }` even at equal specificity. Without this rule,
+   toggling `hidden` from JS has no visual effect on those elements. */
 [hidden] {
   display: none !important;
 }
@@ -43,10 +62,11 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--night-navy);
-  color: var(--floodlight);
-  font-family: 'Work Sans', sans-serif;
+  background: var(--soft-bg);
+  color: var(--text);
+  font-family: 'Manrope', sans-serif;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
 .sr-only {
@@ -56,27 +76,29 @@ html, body {
   clip: rect(0,0,0,0);
 }
 
-/* --- Ticker (signature element, unchanged from v1) --- */
+/* --- Live ticker: was a black bar with amber text, now a thin rounded
+   soft-green pill sitting near the top, matching the reference direction --- */
 .ticker-bar {
-  background: #000;
-  border-bottom: 2px solid var(--amber-alert);
+  background: var(--very-light-green);
+  border-bottom: 1px solid var(--border);
   overflow: hidden;
   white-space: nowrap;
-  height: 34px;
+  height: 36px;
   display: flex;
   align-items: center;
 }
 .ticker-track {
   display: inline-flex;
   gap: 3rem;
-  animation: scroll-ticker 28s linear infinite;
+  animation: scroll-ticker 32s linear infinite;
   padding-left: 100%;
 }
 .ticker-track span {
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--amber-alert);
-  font-size: 0.85rem;
-  letter-spacing: 0.02em;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  color: var(--dark-green);
+  font-size: 0.82rem;
+  letter-spacing: 0.01em;
 }
 @keyframes scroll-ticker {
   from { transform: translateX(0); }
@@ -86,39 +108,73 @@ html, body {
   .ticker-track { animation: none; padding-left: 0; }
 }
 
-/* --- Header --- */
+/* --- Header: clean white, spacious, premium - not a gradient-heavy dark bar --- */
 .app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.1rem 2rem;
-  background: linear-gradient(180deg, var(--pitch-green), var(--night-navy));
-  border-bottom: 1px solid var(--card-border);
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
   flex-wrap: wrap;
   gap: 0.75rem;
 }
-.brand { display: flex; align-items: center; gap: 0.9rem; }
+.header-left { display: flex; align-items: center; gap: 0.9rem; }
 .brand-mark {
-  font-family: 'Archivo Black', sans-serif;
-  background: var(--turf-accent);
-  color: var(--night-navy);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  background: var(--green);
+  color: var(--white);
   width: 42px; height: 42px;
-  border-radius: 8px;
+  border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
   font-size: 1.3rem;
   flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
 }
 .brand-text h1 {
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 1.4rem;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.35rem;
   margin: 0;
-  letter-spacing: 0.02em;
+  color: var(--text);
+  letter-spacing: -0.01em;
 }
 .brand-text p {
   margin: 0;
   font-size: 0.8rem;
-  color: var(--text-dim);
-  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-secondary);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 500;
+}
+.brand-text .brand-sub {
+  font-size: 0.74rem;
+  opacity: 0.85;
+}
+
+/* header center: match summary, spec wants this visually centered between
+   brand and the utility icons on the right */
+.header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  flex: 1;
+  min-width: 200px;
+}
+.matchup {
+  margin: 0;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.match-summary {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
 }
 
 .header-right {
@@ -128,53 +184,75 @@ html, body {
   flex-wrap: wrap;
 }
 
-.live-pill {
+/* LIVE badge - kept as the brand green rather than a warning color, since
+   red/orange/yellow are reserved for status communication elsewhere */
+.live-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  background: rgba(193, 68, 14, 0.18);
-  color: #FF8A65;
-  font-family: 'JetBrains Mono', monospace;
+  background: var(--very-light-green);
+  color: var(--dark-green);
+  font-family: 'Manrope', sans-serif;
   font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.3rem 0.6rem;
+  font-weight: 700;
+  padding: 0.35rem 0.7rem;
   border-radius: 999px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--light-green);
 }
 .live-dot {
   width: 7px; height: 7px;
   border-radius: 50%;
-  background: #FF8A65;
-  animation: pulse-dot 1.6s ease-in-out infinite;
+  background: var(--green);
+  animation: pulse-dot 1.8s ease-in-out infinite;
 }
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.8); }
+  50% { opacity: 0.45; transform: scale(0.82); }
+}
+
+.lang-wrap { position: relative; }
+.lang-select {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.5rem 0.7rem;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.lang-select:hover, .lang-select:focus-visible {
+  border-color: var(--light-green);
 }
 
 .clock {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
   font-size: 0.85rem;
-  color: var(--text-dim);
+  color: var(--text-secondary);
 }
 
 .icon-btn {
   position: relative;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid var(--card-border);
-  border-radius: 8px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
   width: 38px; height: 38px;
   font-size: 1.1rem;
   cursor: pointer;
-  color: var(--floodlight);
+  color: var(--text);
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
-.icon-btn:hover, .icon-btn:focus-visible { background: rgba(255,255,255,0.12); }
+.icon-btn:hover, .icon-btn:focus-visible { background: var(--very-light-green); border-color: var(--light-green); }
 
 .badge {
   position: absolute;
   top: -6px; right: -6px;
-  background: var(--amber-alert);
-  color: var(--night-navy);
+  background: var(--orange);
+  color: var(--text);
   font-size: 0.65rem;
   font-weight: 700;
   min-width: 17px;
@@ -182,6 +260,7 @@ html, body {
   border-radius: 999px;
   display: flex; align-items: center; justify-content: center;
   padding: 0 3px;
+  border: 2px solid var(--white);
 }
 
 .notif-wrap { position: relative; }
@@ -192,64 +271,68 @@ html, body {
   width: 300px;
   max-height: 320px;
   overflow-y: auto;
-  background: #10233b;
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
   padding: 0.9rem;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+  box-shadow: var(--shadow-lg);
   z-index: 20;
 }
 .notif-panel h3 {
   margin: 0 0 0.6rem;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--turf-accent);
+  letter-spacing: 0.05em;
+  color: var(--dark-green);
 }
 .notif-list { display: flex; flex-direction: column; gap: 0.5rem; }
 .notif-item {
-  background: rgba(255,255,255,0.04);
-  border-left: 3px solid var(--turf-accent);
-  border-radius: 6px;
-  padding: 0.5rem 0.6rem;
+  background: var(--soft-bg);
+  border-left: 3px solid var(--med-green);
+  border-radius: 8px;
+  padding: 0.55rem 0.65rem;
   font-size: 0.82rem;
   cursor: pointer;
+  transition: background 0.15s ease;
 }
-.notif-item.unread { border-left-color: var(--amber-alert); }
+.notif-item:hover { background: var(--very-light-green); }
+.notif-item.unread { border-left-color: var(--orange); }
 .notif-item .notif-time {
   display: block;
   margin-top: 0.2rem;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 0.7rem;
-  color: var(--text-dim);
+  color: var(--text-secondary);
 }
-.notif-empty { color: var(--text-dim); font-size: 0.85rem; padding: 0.4rem; }
+.notif-empty { color: var(--text-secondary); font-size: 0.85rem; padding: 0.4rem; }
 
+/* Emergency stays the one place red is used for a full-strength background,
+   per "emergency button should remain red for clear visibility" */
 .emergency-btn {
-  background: var(--red-alert);
-  color: var(--floodlight);
+  background: var(--emergency);
+  color: var(--white);
   border: none;
-  border-radius: 8px;
-  padding: 0.55rem 1rem;
+  border-radius: 10px;
+  padding: 0.6rem 1.1rem;
   font-weight: 700;
   cursor: pointer;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Manrope', sans-serif;
+  box-shadow: var(--shadow-sm);
+  transition: background 0.15s ease, transform 0.1s ease;
 }
-.emergency-btn:hover, .emergency-btn:focus-visible { background: #d9520f; }
+.emergency-btn:hover, .emergency-btn:focus-visible { background: #b71c1c; transform: translateY(-1px); }
 
 /* --- Emergency modal --- */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(23, 32, 26, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 50;
   padding: 1rem;
-  /* BUG FIX: this element no longer relies on the `hidden` attribute for
-     show/hide - it needs a smooth fade, which display:none can't animate.
-     Default state below is fully invisible and non-interactive. */
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -264,202 +347,235 @@ html, body {
   .modal-overlay { transition: none; }
 }
 .modal {
-  background: #10233b;
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 1.5rem;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.6rem;
   max-width: 420px;
   width: 100%;
+  box-shadow: var(--shadow-lg);
 }
-.modal h2 { margin: 0 0 0.3rem; font-family: 'Archivo Black', sans-serif; font-size: 1.1rem; }
-.modal-sub { color: var(--text-dim); font-size: 0.85rem; margin: 0 0 1rem; }
+.modal h2 { margin: 0 0 0.3rem; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 1.15rem; color: var(--text); }
+.modal-sub { color: var(--text-secondary); font-size: 0.85rem; margin: 0 0 1.1rem; }
+.emergency-step { animation: step-fade 0.15s ease; }
+@keyframes step-fade {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .emergency-step { animation: none; }
+}
 .emergency-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.6rem;
   margin-bottom: 1rem;
 }
+.emergency-grid .emergency-option:nth-child(5) {
+  grid-column: 1 / -1;
+}
 .emergency-option {
-  background: rgba(193,68,14,0.15);
-  border: 1px solid var(--red-alert);
-  color: var(--floodlight);
-  border-radius: 8px;
-  padding: 0.7rem 0.5rem;
+  background: #FDECEA;
+  border: 1px solid rgba(211,47,47,0.3);
+  color: #C62828;
+  border-radius: 10px;
+  padding: 0.75rem 0.5rem;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.9rem;
+  transition: background 0.15s ease;
 }
 .emergency-option:hover, .emergency-option:focus-visible {
-  background: rgba(193,68,14,0.3);
+  background: #F9D5D2;
 }
 
+/* second step (location) reuses .emergency-option for the quick picks (Gate
+   A/B/C/Section/Other) - those should look like calm, selectable choices,
+   not danger buttons, since the danger signal was already given in step 1 */
+#emergencyLocationGrid .emergency-option {
+  background: var(--very-light-green);
+  border-color: var(--light-green);
+  color: var(--dark-green);
+}
+#emergencyLocationGrid .emergency-option:hover,
+#emergencyLocationGrid .emergency-option:focus-visible {
+  background: var(--light-green);
+}
+
+.emergency-location-detail {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.emergency-location-detail input {
+  flex: 1;
+  background: var(--soft-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.emergency-location-detail input:focus-visible {
+  outline: 2px solid var(--med-green);
+  outline-offset: 1px;
+}
+.cta-btn {
+  background: var(--dark-green);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  padding: 0 1.1rem;
+  font-weight: 700;
+  font-family: 'Manrope', sans-serif;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.cta-btn:hover, .cta-btn:focus-visible { background: var(--green); }
+
+#emergencyBackBtn { margin-top: 0; }
+
 .ghost-btn {
-  background: transparent;
-  border: 1px solid var(--turf-accent);
-  color: var(--turf-accent);
-  padding: 0.55rem 1rem;
-  border-radius: 6px;
-  font-family: 'Work Sans', sans-serif;
-  font-weight: 600;
+  background: var(--white);
+  border: 1px solid var(--light-green);
+  color: var(--dark-green);
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
   cursor: pointer;
   transition: background 0.15s ease;
   width: 100%;
 }
 .ghost-btn:hover, .ghost-btn:focus-visible {
-  background: rgba(82,183,136,0.15);
+  background: var(--very-light-green);
 }
 
-/* --- Layout --- */
+/* --- Layout: real 3-column grid (left status / center chat / right map)
+   matching the .col-left/.col-center/.col-right structure in index.html.
+   Center (chat) gets the most room since it's the primary focal point. --- */
 .layout {
   display: grid;
-  grid-template-columns: 360px 1fr;
+  grid-template-columns: 300px 1fr 300px;
   gap: 1.5rem;
   padding: 1.5rem 2rem;
-  max-width: 1280px;
+  max-width: 1400px;
   margin: 0 auto;
   align-items: start;
 }
-@media (max-width: 900px) {
-  .layout { grid-template-columns: 1fr; }
-}
-
-.sidebar {
+.col {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.9rem;
 }
 
-/* utility panels (map, heatmap, gates, ops) sit one level above the page -
-   quiet, not competing with the match card or chat for attention */
-.card {
-  background: var(--bg-panel);
-  border: 1px solid var(--border-panel);
-  border-radius: 10px;
-  padding: 0.95rem 1.1rem;
+/* Tablet: 2 columns - left+center keep their row, right column's content
+   drops to a full-width row underneath rather than squeezing into a third
+   narrow track */
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: 260px 1fr;
+    grid-template-areas:
+      "left center"
+      "right right";
+  }
+  .col-left { grid-area: left; }
+  .col-center { grid-area: center; }
+  .col-right { grid-area: right; grid-template-columns: 1fr 1fr; display: grid; gap: 0.9rem; }
+}
+
+/* Mobile: single column. Spec calls for a specific reading order that
+   doesn't match DOM order (chat panels interleave with sidebar panels), so
+   col-left/col-right are collapsed with display:contents - their children
+   become direct flex items of .layout and get reordered individually via
+   their (already-unique) aria-label. col-center is left alone since it's
+   also .chat-panel itself, not just a wrapper. */
+@media (max-width: 700px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .col-left, .col-right { display: contents; }
+  [aria-label="Live status"] { order: 1; }
+  [aria-label="Gate wait times"] { order: 2; }
+  [aria-label="Crowd density"] { order: 3; }
+  [aria-label="Stadium map"] { order: 4; }
+  .chat-panel { order: 5; height: 75vh; }
+  [aria-label="Best option right now"] { order: 6; }
+  [aria-label="Your matchday"] { order: 7; }
+  [aria-label="Operations dashboard"] { order: 8; }
+  [aria-label="Weather"] { order: 9; }
+}
+
+/* utility panels - light cards with a subtle green border, per spec.
+   (renamed from the old .card - index.html uses .panel everywhere now) */
+.panel {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .panel-title {
-  font-family: 'Work Sans', sans-serif;
-  font-weight: 600;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
   font-size: 0.78rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  color: var(--dark-green);
   margin: 0 0 0.75rem;
 }
 
-/* --- Match info card: the one thing in the sidebar that should look like
-   a hero, not a utility widget. Elevated background + gradient + shadow +
-   bigger type, distinct from the flatter cards below it --- */
-.match-card {
-  background: linear-gradient(155deg, rgba(82,183,136,0.14), var(--bg-elevated) 55%);
-  border: 1px solid var(--border-elevated);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-}
-.match-card .eyebrow {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
-  color: var(--turf-accent);
-  margin: 0 0 0.35rem;
-  letter-spacing: 0.06em;
-  font-weight: 600;
-}
-.match-card h2 {
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 1.5rem;
-  margin: 0 0 1rem;
-  letter-spacing: 0.01em;
-}
-.match-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.9rem;
-}
-.match-grid .label {
-  display: block;
-  font-size: 0.7rem;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 500;
-}
-.match-grid .value {
-  display: block;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1rem;
-  font-weight: 600;
-  margin-top: 0.2rem;
-}
-.status-live { color: #FF8A65; }
-
-/* --- Stats cards: secondary emphasis - a step down from the match card,
-   a step up from the flat utility panels --- */
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.6rem;
-}
-.stat-card {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-panel);
-  border-radius: 10px;
-  padding: 0.75rem 0.9rem;
+/* --- Live Status: icon + label + value rows, per spec --- */
+.status-list { display: flex; flex-direction: column; gap: 0.55rem; }
+.status-row {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+  color: var(--text);
 }
-.stat-label {
-  font-size: 0.68rem;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-weight: 500;
-}
-.stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--turf-accent);
-  transition: opacity 0.2s ease;
+.status-row strong {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  color: var(--dark-green);
 }
 
-/* --- Stadium map: previously a flat radial gradient with plain text tags -
-   fair critique that it looked like a placeholder. Added a running-track
-   ring and yard-line pitch markings for texture, and markers are now pill
-   badges with a status dot so gates read as distinct "places" rather than
-   floating labels --- */
+/* --- Stadium map: light background per spec, pale green pitch instead of
+   a dark radial gradient, markers as clean white pill badges --- */
 .stadium-map {
   position: relative;
-  background:
-    repeating-radial-gradient(ellipse at center, rgba(255,255,255,0.02) 0, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 28px),
-    radial-gradient(ellipse at center, #18402f 0%, #0c2016 70%, #081712 100%);
-  border-radius: 12px;
+  background: var(--very-light-green);
+  border-radius: 14px;
   height: 270px;
-  border: 1px solid var(--border-panel);
+  border: 1px solid var(--border);
   overflow: hidden;
-  box-shadow: inset 0 0 40px rgba(0,0,0,0.35);
 }
 .pitch {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   width: 56%; height: 42%;
-  border: 2px solid rgba(255,255,255,0.18);
+  border: 2px solid rgba(27,94,32,0.22);
   border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.22em;
-  color: rgba(255,255,255,0.22);
-  background-image: repeating-linear-gradient(90deg, transparent, transparent calc(100% / 6 - 1px), rgba(255,255,255,0.07) calc(100% / 6 - 1px), rgba(255,255,255,0.07) calc(100% / 6));
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: rgba(27,94,32,0.28);
+  background-image: repeating-linear-gradient(90deg, transparent, transparent calc(100% / 6 - 1px), rgba(27,94,32,0.06) calc(100% / 6 - 1px), rgba(27,94,32,0.06) calc(100% / 6));
 }
 .pitch::before {
   content: "";
   position: absolute;
   width: 15%;
   height: 15%;
-  border: 2px solid rgba(255,255,255,0.18);
+  border: 2px solid rgba(27,94,32,0.22);
   border-radius: 50%;
 }
 .map-marker {
@@ -469,213 +585,396 @@ html, body {
   align-items: center;
   gap: 0.3rem;
   font-size: 0.68rem;
-  font-family: 'JetBrains Mono', monospace;
-  background: rgba(8,20,16,0.72);
-  backdrop-filter: blur(2px);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  background: var(--white);
   padding: 0.28rem 0.55rem;
   border-radius: 999px;
-  border: 1px solid var(--border-panel);
+  border: 1px solid var(--border);
   white-space: nowrap;
   cursor: default;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  box-shadow: var(--shadow-sm);
 }
 .map-marker::before {
   content: "";
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: var(--turf-accent);
+  background: var(--green);
   flex-shrink: 0;
 }
-.map-marker.gate { border-color: rgba(82,183,136,0.4); color: var(--floodlight); font-weight: 600; }
-.map-marker.amenity { color: var(--text-dim); font-size: 0.62rem; }
-.map-marker.amenity::before { background: var(--text-dim); }
+.map-marker.gate { border-color: var(--light-green); color: var(--text); }
+.map-marker.amenity { color: var(--text-secondary); font-size: 0.62rem; }
+.map-marker.amenity::before { background: var(--text-secondary); }
 .map-marker.active {
   animation: marker-pulse 1s ease-in-out 3;
-  border-color: var(--amber-alert);
-  color: var(--amber-alert);
+  border-color: var(--orange);
+  color: #B45F04;
   z-index: 5;
 }
-.map-marker.active::before { background: var(--amber-alert); }
+.map-marker.active::before { background: var(--orange); }
 @keyframes marker-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(232,135,30,0.6); }
-  50% { box-shadow: 0 0 0 6px rgba(232,135,30,0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,152,0,0.45); }
+  50% { box-shadow: 0 0 0 7px rgba(255,152,0,0); }
 }
 .map-hint {
   margin: 0.6rem 0 0;
   font-size: 0.72rem;
-  color: var(--text-dim);
+  color: var(--text-secondary);
 }
 
-/* --- Heatmap --- */
-.heatmap-legend {
-  display: flex;
-  gap: 1rem;
+/* --- Best Option Right Now: the recommendation panel. Slightly warmer
+   than the other utility panels since it's meant to feel like advice, not
+   raw status - light green wash instead of plain white. --- */
+.recommendation-panel {
+  background: linear-gradient(155deg, var(--very-light-green), var(--white) 65%);
+  border-color: var(--light-green);
+}
+.recommendation-list { display: flex; flex-direction: column; gap: 0.65rem; }
+.recommendation-item {
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+}
+.rec-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+.rec-name {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-top: 0.1rem;
+}
+.rec-detail {
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 0.78rem;
-  color: var(--text-dim);
-  margin-bottom: 0.7rem;
+  color: var(--text-secondary);
+  margin-top: 0.1rem;
 }
-.heatmap-legend .dot { margin-right: 0.3rem; }
-.dot {
-  display: inline-block;
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  vertical-align: middle;
-}
-.dot.low { background: var(--turf-accent); }
-.dot.medium { background: var(--amber-alert); }
-.dot.high { background: var(--red-alert); }
-
-.heatmap-list { display: flex; flex-direction: column; gap: 0.4rem; }
-.heatmap-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
-}
-.heatmap-row .bar-track {
-  flex: 1;
-  height: 6px;
-  background: rgba(255,255,255,0.08);
+.rec-tag {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.7rem;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--dark-green);
+  background: var(--very-light-green);
+  border: 1px solid var(--light-green);
+  padding: 0.15rem 0.45rem;
   border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+
+/* --- Your Matchday: personalized panel, section-aware --- */
+.matchday-panel {
+  border-color: var(--light-green);
+}
+.section-input-row { margin-bottom: 0.8rem; }
+.section-input-row input {
+  width: 100%;
+  background: var(--soft-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.55rem 0.75rem;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+.section-input-row input:focus-visible {
+  outline: 2px solid var(--med-green);
+  outline-offset: 1px;
+}
+.matchday-details { display: flex; flex-direction: column; gap: 0.7rem; }
+.matchday-row {
+  border-left: 3px solid var(--light-green);
+  padding-left: 0.7rem;
+}
+.md-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+}
+.md-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-top: 0.1rem;
+}
+.md-sub {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 0.1rem;
+}
+
+/* --- Weather card: simple, clean, minimal icons per spec --- */
+.weather-panel { border-color: var(--border); }
+.weather-card { display: flex; flex-direction: column; }
+.weather-headline {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+.wtemp {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: var(--dark-green);
+}
+.wcondition {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.weather-detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: var(--text);
+  padding: 0.3rem 0;
+  border-top: 1px solid var(--border);
+}
+.weather-detail-row:first-of-type { border-top: none; }
+.weather-detail-row strong {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+}
+
+/* --- Crowd Density: horizontal Low→Medium→High scale with a positioned
+   marker, per spec ("Low -------- Medium -------- High") --- */
+.density-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+}
+.density-track {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--green), var(--yellow), var(--red));
+  margin-bottom: 0.6rem;
   overflow: hidden;
 }
-.heatmap-row .bar-fill { height: 100%; border-radius: 999px; transition: width 0.4s ease; }
-.bar-fill.low { background: var(--turf-accent); width: 30%; }
-.bar-fill.medium { background: var(--amber-alert); width: 65%; }
-.bar-fill.high { background: var(--red-alert); width: 95%; }
+.density-fill {
+  position: absolute;
+  inset: 0;
+  right: auto;
+  width: 0;
+  background: rgba(255,255,255,0.55);
+  transition: width 0.4s ease;
+  pointer-events: none;
+}
+.density-marker {
+  position: absolute;
+  top: 50%;
+  left: 15%;
+  transform: translate(-50%, -50%);
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 3px solid var(--dark-green);
+  box-shadow: var(--shadow-sm);
+  transition: left 0.4s ease;
+}
+.density-current { margin: 0; font-size: 0.85rem; color: var(--text); }
+.density-current strong { font-family: 'Space Grotesk', sans-serif; }
 
-/* --- Gate board (same visual language as v1) --- */
+/* --- Gate board: colored circular status dot, queue number is the visually
+   prominent bit (Space Grotesk, large, bold), fastest gate gets a tag.
+   Matches the actual markup app.js generates - .gate-left/.status-dot/
+   .gate-crowd/.gate-wait/.best-tag (the old .gate-status selector targeted
+   markup that no longer exists after the gate-row structure changed). --- */
 .gate-board { display: flex; flex-direction: column; gap: 0.6rem; }
 .gate-row {
-  background: rgba(255,255,255,0.04);
-  border-left: 4px solid var(--turf-accent);
-  border-radius: 6px;
-  padding: 0.6rem 0.8rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.82rem;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  font-family: 'Manrope', sans-serif;
 }
-.gate-row.delayed { border-left-color: var(--amber-alert); }
-.gate-row.closed { border-left-color: var(--red-alert); opacity: 0.75; }
-.gate-row .gate-id { font-weight: 600; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.15rem; color: var(--floodlight); }
-.gate-row .gate-status { color: var(--text-dim); }
+.gate-row.best { border-color: var(--light-green); background: var(--very-light-green); }
+.gate-row.closed { opacity: 0.65; }
 
-/* --- Ops dashboard --- */
+.gate-left { display: flex; align-items: center; gap: 0.6rem; }
+.status-dot {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-dot.low { background: var(--green); }
+.status-dot.medium { background: var(--yellow); }
+.status-dot.high { background: var(--red); }
+
+.gate-id {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.best-tag {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--dark-green);
+  background: var(--light-green);
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  letter-spacing: 0.03em;
+}
+.gate-crowd {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-top: 0.1rem;
+}
+.gate-wait {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--dark-green);
+  flex-shrink: 0;
+}
+.gate-wait small {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* --- Ops dashboard: thin bars, not charts --- */
 .ops-dashboard { display: flex; flex-direction: column; gap: 0.7rem; }
 .ops-row { font-size: 0.82rem; }
 .ops-row .ops-top { display: flex; justify-content: space-between; margin-bottom: 0.25rem; }
-.ops-row .ops-label { color: var(--text-dim); }
-.ops-row .ops-value { font-family: 'JetBrains Mono', monospace; color: var(--floodlight); }
+.ops-row .ops-label { color: var(--text-secondary); font-weight: 500; }
+.ops-row .ops-value { font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: var(--text); }
 .ops-bar-track {
   height: 6px;
-  background: rgba(255,255,255,0.08);
+  background: var(--soft-bg);
   border-radius: 999px;
   overflow: hidden;
 }
 .ops-bar-fill {
   height: 100%;
-  background: var(--turf-accent);
+  background: var(--green);
   border-radius: 999px;
   transition: width 0.4s ease;
 }
-.ops-bar-fill.warn { background: var(--amber-alert); }
-.ops-bar-fill.critical { background: var(--red-alert); }
+.ops-bar-fill.warn { background: var(--yellow); }
+.ops-bar-fill.critical { background: var(--red); }
 
-/* --- Chat panel --- */
+/* --- Chat panel: the primary focal point. White, soft green border,
+   noticeably more shadow/lift than the sidebar utility cards --- */
 .chat-panel {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-elevated);
-  border-radius: 14px;
+  background: var(--white);
+  border: 1px solid var(--light-green);
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   height: 82vh;
   min-height: 560px;
   position: sticky;
   top: 1.5rem;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+  box-shadow: var(--shadow-lg);
 }
 
 .quick-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  padding: 0.9rem 1rem 0;
+  padding: 1rem 1.1rem 0;
 }
 .quick-actions button {
-  background: rgba(82,183,136,0.1);
-  border: 1px solid rgba(82,183,136,0.35);
-  color: var(--floodlight);
+  background: var(--very-light-green);
+  border: 1px solid var(--light-green);
+  color: var(--dark-green);
   border-radius: 999px;
-  padding: 0.4rem 0.8rem;
+  padding: 0.45rem 0.85rem;
   font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
+  font-family: 'Manrope', sans-serif;
   transition: background 0.15s ease, transform 0.1s ease;
 }
 .quick-actions button:hover, .quick-actions button:focus-visible {
-  background: rgba(82,183,136,0.22);
+  background: var(--light-green);
   transform: translateY(-1px);
+}
+.quick-actions button:disabled {
+  opacity: 0.5;
+  cursor: default;
+  transform: none;
 }
 
 .chat-log {
   flex: 1;
   overflow-y: auto;
-  padding: 1.1rem;
+  padding: 1.2rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 .msg { max-width: 88%; display: flex; gap: 0.6rem; }
 .msg-body { display: flex; flex-direction: column; }
-.msg p { margin: 0.2rem 0 0; line-height: 1.5; font-size: 0.95rem; }
+.msg p { margin: 0.2rem 0 0; line-height: 1.5; font-size: 0.95rem; color: var(--text); }
 .msg-label {
-  font-family: 'Work Sans', sans-serif;
-  font-weight: 600;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
   font-size: 0.72rem;
-  color: var(--turf-accent);
+  color: var(--green);
 }
 .avatar {
   flex-shrink: 0;
   width: 32px; height: 32px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 1.1rem;          /* comfortable size for the 🏟️ emoji */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-}
-.avatar-assistant { background: var(--turf-accent); color: var(--night-navy); }
-.avatar-user {
-  background: var(--amber-alert);
-  color: var(--night-navy);
-  font-size: 0.58rem;         /* "You" fits the 32px circle */
+  font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
-  letter-spacing: 0;
+  font-size: 0.85rem;
+  box-shadow: var(--shadow-sm);
 }
+.avatar-assistant { background: var(--dark-green); color: var(--white); }
+.avatar-user { background: var(--med-green); color: var(--white); }
 
 .msg-user { align-self: flex-end; flex-direction: row-reverse; text-align: right; }
 .msg-user .msg-body { align-items: flex-end; }
-.msg-user .msg-label { color: var(--amber-alert); }
+.msg-user .msg-label { color: var(--dark-green); }
 .msg-user p {
-  background: var(--pitch-green);
+  background: var(--dark-green);
+  color: var(--white);
   padding: 0.6rem 0.95rem;
   border-radius: 16px 16px 4px 16px;
   display: inline-block;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: var(--shadow-sm);
 }
 .msg-assistant p {
-  background: rgba(255,255,255,0.07);
+  background: var(--soft-bg);
+  border: 1px solid var(--border);
   padding: 0.6rem 0.95rem;
   border-radius: 16px 16px 16px 4px;
-  display: block;             /* allow multi-line bot replies to flow naturally */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  max-width: 100%;
+  display: inline-block;
 }
-.msg-error .msg-label { color: var(--red-alert); }
-.msg-error p { color: #FFB4A2; background: rgba(193,68,14,0.12); }
+.msg-error .msg-label { color: var(--red); }
+.msg-error p { color: #B71C1C; background: #FDECEA; border: 1px solid rgba(229,57,53,0.25); }
 
 .msg-timestamp {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 0.65rem;
-  color: var(--text-dim);
+  color: var(--text-secondary);
   margin-top: 0.25rem;
 }
 
@@ -683,8 +982,8 @@ html, body {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0 1.1rem 0.6rem;
-  color: var(--text-dim);
+  padding: 0 1.2rem 0.6rem;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 .typing-indicator p { margin: 0; display: flex; align-items: center; }
@@ -704,39 +1003,142 @@ html, body {
   display: flex;
   gap: 0.6rem;
   padding: 1rem;
-  border-top: 1px solid var(--card-border);
+  border-top: 1px solid var(--border);
 }
 .chat-form input {
   flex: 1;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 6px;
-  padding: 0.65rem 0.8rem;
-  color: var(--floodlight);
-  font-family: 'Work Sans', sans-serif;
+  background: var(--soft-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  color: var(--text);
+  font-family: 'Manrope', sans-serif;
   font-size: 0.95rem;
 }
 .chat-form input:focus-visible {
-  outline: 2px solid var(--turf-accent);
+  outline: 2px solid var(--med-green);
   outline-offset: 1px;
 }
+.chat-form input:disabled {
+  opacity: 0.6;
+}
 .chat-form button {
-  background: var(--turf-accent);
-  color: var(--night-navy);
+  background: var(--green);
+  color: var(--white);
   border: none;
-  border-radius: 6px;
-  padding: 0 1.3rem;
-  font-weight: 600;
+  border-radius: 999px;
+  padding: 0 1.4rem;
+  font-weight: 700;
+  font-family: 'Manrope', sans-serif;
   cursor: pointer;
+  transition: background 0.15s ease;
 }
 .chat-form button:hover, .chat-form button:focus-visible {
-  background: #6FCB9F;
+  background: var(--dark-green);
+}
+.chat-form button:disabled {
+  background: var(--light-green);
+  cursor: default;
+}
+
+/* mic/send need to be round icon buttons, not the wide labeled pill the
+   generic .chat-form button rule above produces - that rule was written
+   for a single "Ask" button and looks wrong around a single emoji */
+.mic-btn, .send-btn {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mic-btn {
+  background: var(--very-light-green);
+  color: var(--dark-green);
+  border: 1px solid var(--light-green);
+}
+.mic-btn:hover, .mic-btn:focus-visible { background: var(--light-green); }
+.mic-btn[aria-pressed="true"] {
+  background: var(--emergency);
+  color: var(--white);
+  border-color: var(--emergency);
+  animation: mic-pulse 1.2s ease-in-out infinite;
+}
+@keyframes mic-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(211,47,47,0.35); }
+  50% { box-shadow: 0 0 0 6px rgba(211,47,47,0); }
+}
+.mic-btn:disabled {
+  background: var(--soft-bg);
+  color: var(--text-secondary);
+  border-color: var(--border);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* --- Contextual suggestion chips shown after an AI reply --- */
+.suggestion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0 1.1rem 0.8rem;
+}
+.suggestion-chips button {
+  background: var(--white);
+  border: 1px solid var(--light-green);
+  color: var(--dark-green);
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Manrope', sans-serif;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.suggestion-chips button:hover, .suggestion-chips button:focus-visible {
+  background: var(--very-light-green);
+  transform: translateY(-1px);
+}
+.suggestion-chips button:disabled {
+  opacity: 0.5;
+  cursor: default;
+  transform: none;
 }
 
 .app-footer {
   text-align: center;
-  padding: 1rem;
-  color: var(--text-dim);
+  padding: 1.1rem;
+  color: var(--text-secondary);
   font-size: 0.75rem;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 500;
+}
+
+/* --- High contrast mode ---
+   The 👁 header toggle added this class to <body> but had no CSS to respond
+   to it - it was a no-op button. This bumps text/border contrast and removes
+   the softer tinted shadows, without changing layout or which colors mean
+   what (green still = good, red still = emergency, etc). */
+body.high-contrast {
+  --text: #000000;
+  --text-secondary: #2B2B2B;
+  --border: #4A4A4A;
+  --soft-bg: #FFFFFF;
+  --very-light-green: #D7ECDA;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.25);
+}
+body.high-contrast .panel,
+body.high-contrast .chat-panel,
+body.high-contrast .modal,
+body.high-contrast .gate-row,
+body.high-contrast .recommendation-item {
+  border-width: 2px;
+}
+body.high-contrast .msg-assistant p {
+  border-width: 2px;
 }

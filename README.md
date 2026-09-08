@@ -73,6 +73,26 @@ npm start
 # visit http://localhost:3000
 ```
 
+## Light theme concierge redesign
+
+A full visual and behavioral redesign, replacing the earlier dark "Premium Stadium Night" direction with a light + soft green + white theme and a genuine concierge experience rather than a dashboard:
+
+- **New palette and type**: Manrope (body/headings) + Space Grotesk (live numbers, queue times), replacing the previous dark navy palette and monospace-heavy type.
+- **Three-column layout**: left column (live status, gate wait times, crowd density scale, ops dashboard) and right column (map, recommendations, matchday, weather) now support the center chat panel, which is the primary focus.
+- **Recommendation engine** (`renderRecommendations` in `app.js`): computes the best current gate, food stall, restroom, and parking lot directly from live data — no invented names or numbers, just "lowest wait / lowest occupancy among open options."
+- **Section-aware matchday panel**: typing a section number finds the gate whose range contains it and the nearest restroom/food stall by section proximity, using only the ranges already present in the data (`parseSectionRange`, `gateForSection`, `nearestBySection`).
+- **Concierge system prompt** (`server.js`): explicitly forbids phrases like "based on the dataset" or "that's outside my area," teaches natural-language intent recognition (gate/food/restroom/medical/accessibility/parking phrased many ways), asks for section context when useful, and requires predictions to be clearly labeled "estimated."
+- **Language support**: a language selector sends the chosen language to `/api/chat`, and the system prompt instructs Claude to respond in it. Full UI-string translation (button labels, panel titles) was intentionally left out of scope — see note below.
+- **Voice input**: mic button uses the browser's built-in `SpeechRecognition` API, no dependency added; disables itself gracefully where unsupported (notably Firefox).
+- **Audio guidance & high contrast**: two header toggles — audio guidance reads AI replies aloud via `SpeechSynthesis`; high contrast swaps a handful of CSS variables for higher-contrast values.
+- **2-step emergency modal**: issue type, then location (Gate A/B/C, a section you type in, or "Other"), building a structured `Emergency: X / Location: Y / Time: Z` message, same as before but now location-aware.
+- **Contextual suggestion chips**: a lightweight keyword heuristic (`detectIntent`) picks a relevant follow-up chip set after each reply (food/gate/restroom/medical/accessibility/parking), not real intent classification, just enough to feel responsive.
+- **Dead data removed**: the old raw-count dashboard fields (`lostAndFound`, `cleaningRequests`, `securityAlerts`) were dropped once the redesigned Ops Dashboard moved to percentage fields and nothing read the old ones anymore. The corresponding now-redundant test was removed too.
+
+**Scope notes, called out honestly:**
+- Language support covers AI chat responses; static UI labels (buttons, panel titles) remain in English. Fully localizing every string for 5 languages was more duplicated content than a hackathon-scope project needs, but the higher-value part (the assistant actually responding in the fan's language) is real and working.
+- "Recommendation cards" inside the chat itself (as opposed to the dedicated Best Option panel) were not built as structured UI elements — that would need parsing Claude's free-text replies into a rigid schema, which is fragile. Instead, the system prompt asks Claude to phrase recommendations conversationally, and the dedicated, data-driven Recommendation panel handles the structured version.
+
 ## Design & code quality pass
 
 Feedback on an earlier build was fair: the UI read as one flat plane of identical bordered boxes, and the chat felt like documentation rather than a messaging app. Addressed directly:

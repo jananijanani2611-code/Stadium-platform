@@ -8,6 +8,10 @@
     "kickoffDisplay": "7:30 PM",
     "attendance": 79420,
     "weatherC": 22,
+    "weatherCondition": "Clear Sky",
+    "windKmh": 8,
+    "humidityPct": 60,
+    "precipPct": 0,
     "status": "LIVE"
   },
   "gates": [
@@ -17,7 +21,7 @@
         "101-115"
       ],
       "status": "open",
-      "waitMinutes": 4,
+      "waitMinutes": 2,
       "crowdLevel": "low"
     },
     {
@@ -26,8 +30,8 @@
         "116-130"
       ],
       "status": "open",
-      "waitMinutes": 13,
-      "crowdLevel": "high",
+      "waitMinutes": 2,
+      "crowdLevel": "medium",
       "note": "Heavy crowd building near this gate"
     },
     {
@@ -36,8 +40,8 @@
         "131-145"
       ],
       "status": "delayed",
-      "waitMinutes": 22,
-      "crowdLevel": "low",
+      "waitMinutes": 24,
+      "crowdLevel": "high",
       "note": "Bag check backlog, extra staff dispatched"
     },
     {
@@ -47,7 +51,7 @@
       ],
       "status": "closed",
       "waitMinutes": null,
-      "crowdLevel": "medium",
+      "crowdLevel": "low",
       "note": "Closed for accessibility drop-off until 6:30 PM"
     },
     {
@@ -56,8 +60,8 @@
         "161-175"
       ],
       "status": "open",
-      "waitMinutes": 13,
-      "crowdLevel": "high"
+      "waitMinutes": 4,
+      "crowdLevel": "medium"
     }
   ],
   "amenities": {
@@ -67,14 +71,14 @@
         "nearSection": "108",
         "status": "open",
         "queueMinutes": 2,
-        "occupancyPct": 28
+        "occupancyPct": 36
       },
       {
         "id": "RR-2",
         "nearSection": "122",
         "status": "open",
         "queueMinutes": 9,
-        "occupancyPct": 90
+        "occupancyPct": 91
       },
       {
         "id": "RR-3",
@@ -89,14 +93,14 @@
         "nearSection": "150",
         "status": "open",
         "queueMinutes": 5,
-        "occupancyPct": 53
+        "occupancyPct": 41
       },
       {
         "id": "RR-5",
         "nearSection": "168",
         "status": "open",
         "queueMinutes": 3,
-        "occupancyPct": 49
+        "occupancyPct": 2
       }
     ],
     "foodStalls": [
@@ -104,35 +108,35 @@
         "id": "Concourse Grill",
         "nearSection": "110",
         "status": "open",
-        "queueMinutes": 8,
+        "queueMinutes": 15,
         "popularItem": "Loaded fries"
       },
       {
         "id": "Taco Stand North",
         "nearSection": "125",
         "status": "open",
-        "queueMinutes": 7,
+        "queueMinutes": 6,
         "popularItem": "Street tacos"
       },
       {
         "id": "Global Eats",
         "nearSection": "135",
         "status": "open",
-        "queueMinutes": 25,
+        "queueMinutes": 13,
         "popularItem": "Chicken tikka wrap"
       },
       {
         "id": "Pizza Corner",
         "nearSection": "155",
         "status": "open",
-        "queueMinutes": 9,
+        "queueMinutes": 6,
         "popularItem": "Pepperoni slice"
       },
       {
         "id": "Vegan Kitchen",
         "nearSection": "170",
         "status": "open",
-        "queueMinutes": 1,
+        "queueMinutes": 4,
         "popularItem": "Jackfruit tacos"
       }
     ],
@@ -198,90 +202,93 @@
   },
   "medicalAlerts": [],
   "dashboard": {
-    "lostAndFound": 3,
-    "cleaningRequests": 2,
-    "securityAlerts": 1
+    "crowdManagementPct": 78,
+    "gateOperationsPct": 90,
+    "medicalServicesPct": 100,
+    "cleaningPct": 65,
+    "lostAndFoundPct": 40,
+    "securityPct": 82
   },
   "notifications": [
     {
-      "id": "n-1785427622101-499",
+      "id": "n-1788858825523-145",
+      "message": "Gate A wait time updated to 2 min",
+      "time": "2:43 PM",
+      "read": false
+    },
+    {
+      "id": "n-1788858805531-112",
       "message": "Gate A wait time updated to 4 min",
-      "time": "9:37 PM",
+      "time": "2:43 PM",
       "read": false
     },
     {
-      "id": "n-1785427620196-957",
-      "message": "Pizza Corner queue now 9 min",
-      "time": "9:37 PM",
+      "id": "n-1788858795521-556",
+      "message": "Gate A wait time updated to 6 min",
+      "time": "2:43 PM",
       "read": false
     },
     {
-      "id": "n-1785427542322-187",
-      "message": "Gate C wait time updated to 22 min",
-      "time": "9:35 PM",
+      "id": "n-1788858785524-119",
+      "message": "Concourse Grill queue now 15 min",
+      "time": "2:43 PM",
       "read": false
     },
     {
-      "id": "n-1785427482314-94",
-      "message": "Global Eats queue now 25 min",
-      "time": "9:34 PM",
+      "id": "n-1788858775522-906",
+      "message": "Taco Stand North queue now 4 min",
+      "time": "2:42 PM",
       "read": false
     },
     {
-      "id": "n-1785427422319-921",
-      "message": "Gate A wait time updated to 1 min",
-      "time": "9:33 PM",
+      "id": "n-1788858775521-216",
+      "message": "Gate C wait time updated to 24 min",
+      "time": "2:42 PM",
       "read": false
     },
     {
-      "id": "n-1785427362319-385",
-      "message": "Gate B wait time updated to 13 min",
-      "time": "9:32 PM",
+      "id": "n-1788858765527-740",
+      "message": "Gate E wait time updated to 4 min",
+      "time": "2:42 PM",
       "read": false
     },
     {
-      "id": "n-1785427302316-693",
-      "message": "Taco Stand North queue now 6 min",
-      "time": "9:31 PM",
+      "id": "n-1788858755522-458",
+      "message": "Gate B wait time updated to 2 min",
+      "time": "2:42 PM",
       "read": false
     },
     {
-      "id": "n-1785427242324-196",
-      "message": "Gate A wait time updated to 1 min",
-      "time": "9:30 PM",
+      "id": "n-1788858745528-618",
+      "message": "Concourse Grill queue now 16 min",
+      "time": "2:42 PM",
       "read": false
     },
     {
-      "id": "n-1785427182330-688",
-      "message": "Pizza Corner queue now 7 min",
-      "time": "9:29 PM",
+      "id": "n-1788858736589-283",
+      "message": "Vegan Kitchen queue now 7 min",
+      "time": "2:42 PM",
       "read": false
     },
     {
-      "id": "n-1785427182329-924",
-      "message": "Gate E wait time updated to 13 min",
-      "time": "9:29 PM",
+      "id": "n-1788858736588-325",
+      "message": "Gate C wait time updated to 25 min",
+      "time": "2:42 PM",
       "read": false
     },
     {
-      "id": "n-1785427122319-889",
-      "message": "Gate B wait time updated to 15 min",
-      "time": "9:28 PM",
-      "read": false
-    },
-    {
-      "id": "n-1785427062316-504",
-      "message": "Gate B wait time updated to 13 min",
-      "time": "9:27 PM",
+      "id": "n-1788858735524-56",
+      "message": "Concourse Grill queue now 14 min",
+      "time": "2:42 PM",
       "read": false
     }
   ],
   "liveTicker": [
+    "Gate A wait time updated to 2 min",
     "Gate A wait time updated to 4 min",
-    "Pizza Corner queue now 9 min",
-    "Gate C wait time updated to 22 min",
-    "Global Eats queue now 25 min",
-    "Gate A wait time updated to 1 min",
-    "Gate B wait time updated to 13 min"
+    "Gate A wait time updated to 6 min",
+    "Concourse Grill queue now 15 min",
+    "Gate C wait time updated to 24 min",
+    "Taco Stand North queue now 4 min"
   ]
 }

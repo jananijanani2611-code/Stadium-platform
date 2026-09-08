@@ -62,13 +62,6 @@ test("match info has what the match card needs", () => {
   assert.strictEqual(typeof data.match.weatherC, "number");
 });
 
-test("dashboard counts are numbers, not accidentally strings or missing", () => {
-  const data = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
-  assert.strictEqual(typeof data.dashboard.lostAndFound, "number");
-  assert.strictEqual(typeof data.dashboard.cleaningRequests, "number");
-  assert.strictEqual(typeof data.dashboard.securityAlerts, "number");
-});
-
 test("notifications each have an id, message, time, and read flag", () => {
   const data = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
   for (const n of data.notifications) {
@@ -76,5 +69,36 @@ test("notifications each have an id, message, time, and read flag", () => {
     assert.ok(n.message);
     assert.ok(n.time);
     assert.strictEqual(typeof n.read, "boolean");
+  }
+});
+
+// added when the weather card and ops percentage bars were built - both
+// read these fields directly, so a missing one would silently render "undefined"
+test("match has the weather detail fields the weather card needs", () => {
+  const data = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
+  assert.strictEqual(typeof data.match.weatherCondition, "string");
+  assert.strictEqual(typeof data.match.windKmh, "number");
+  assert.strictEqual(typeof data.match.humidityPct, "number");
+  assert.strictEqual(typeof data.match.precipPct, "number");
+});
+
+test("dashboard has percentage fields for the operations progress bars", () => {
+  const data = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
+  const pctFields = ["crowdManagementPct", "gateOperationsPct", "medicalServicesPct", "cleaningPct", "lostAndFoundPct", "securityPct"];
+  for (const field of pctFields) {
+    const value = data.dashboard[field];
+    assert.strictEqual(typeof value, "number", `${field} should be a number`);
+    assert.ok(value >= 0 && value <= 100, `${field} should be a valid percentage`);
+  }
+});
+
+test("gate sections are parseable ranges for the section-aware matchday panel", () => {
+  const data = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
+  for (const gate of data.gates) {
+    for (const range of gate.sections) {
+      const [start, end] = range.split("-").map((n) => parseInt(n, 10));
+      assert.ok(!Number.isNaN(start) && !Number.isNaN(end), `${gate.id} has an unparseable section range: ${range}`);
+      assert.ok(start <= end, `${gate.id} range is inverted: ${range}`);
+    }
   }
 });
